@@ -19,23 +19,18 @@ app.get("/", function (req, res) {
 });
 
 app.get("/api/", function (req, res) {
-  var date = new Date();
-  var result = date.toString();
-  result = result.slice(0, 3).concat(',').concat(result.slice(3)).slice(0, 29);
-  res.json({unix: date.valueOf(), utc: date.toString()})
+  res.json({unix: Date.now(), utc: Date().toUTCString()})
 });
 
 // your first API endpoint... 
 app.get("/api/:slug", function (req, res) {
-  var date = new Date(req.params.slug.includes('-')?req.params.slug:req.params.slug*1);
-  if (date.toString()=='Invalid Date') return   res.json({error: date.toString()});
-  else {
-    let result = date.toString();
-    result = result.slice(0, 3).concat(',').concat(result.slice(3)).slice(0, 29);
-    res.json({unix: date.valueOf(), utc: result})
-  }  
+  let date = req.params.slug;
+  if (/\d{5,}/.test(date)) date = parseInt(date);
+  date = new Date(date);
+  if (date.toString()==='Invalid Date') return   res.json({error: date.toString()});
+    
+  res.json({unix: new Date(date).valueOf(), utc: new Date(date).toUTCString()}) 
 });
-
 
 
 // listen for requests :)
