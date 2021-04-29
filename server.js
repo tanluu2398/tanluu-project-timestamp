@@ -18,12 +18,22 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+app.get("/api/", function (req, res) {
+  var date = new Date();
+  var result = date.toString();
+  result = result.slice(0, 3).concat(',').concat(result.slice(3)).slice(0, 29);
+  res.json({unix: date.valueOf(), utc: date.toString()})
+});
 
 // your first API endpoint... 
-app.get("/api/timestamp/:slug", function (req, res) {
-  var date = req.params.slug?Date(req.params.slug):new Date();
-  console.log(date);
-  res.json({greeting: 'hello API'});
+app.get("/api/:slug", function (req, res) {
+  var date = new Date(req.params.slug.includes('-')?req.params.slug:req.params.slug*1);
+  if (date.toString()=='Invalid Date') return   res.json({error: date.toString()});
+  else {
+    let result = date.toString();
+    result = result.slice(0, 3).concat(',').concat(result.slice(3)).slice(0, 29);
+    res.json({unix: date.valueOf(), utc: result})
+  }  
 });
 
 
